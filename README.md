@@ -1,45 +1,99 @@
 # ✅ 나의 Todo 앱
 
-내 컴퓨터에서 실행하는 할 일 관리 앱입니다. 어둡고 미니멀한 디자인에, 달력으로 한눈에 볼 수 있어요.
+로그인하면 **나만의 할 일 목록**이 열리는 Todo 앱입니다. 어둡고 미니멀한 디자인에, 달력으로 한눈에 볼 수 있어요.
 
-👉 **바로 써 보기: https://kwkworks-todo.streamlit.app**
-(무료 서버라 데이터는 모두가 함께 쓰고, 서버가 다시 시작되면 초기화될 수 있어요.)
+## 배포 주소
+
+(Render 배포 후 주소를 적습니다)
 
 📄 기획 문서(PRD): [docs/PRD.md](docs/PRD.md)
 
-## 기능
-- **기본(CRUD)**: 할 일 추가 / 목록 보기 / 완료 표시 / 삭제(한 번 더 확인)
-- **추가 기능 1. 마감일 표시**: 오늘 마감은 노란색, 기한이 지난 일은 빨간색으로 보여요.
-- **추가 기능 2. 카테고리(태그)**: 카테고리마다 색이 붙고, 카테고리별로 골라 볼 수 있어요.
-- **캘린더 보기**: 월간 달력에 마감일별로 할 일이 표시돼요.
-- **구글 캘린더로 내보내기**: `.ics` 파일을 받아 구글 캘린더에서 가져오기 하면 돼요.
+## 기능 소개
 
-## 사용한 도구 (모두 무료)
-| 도구 | 역할 |
+### 할 일 관리
+- **추가 / 목록 / 완료 표시 / 삭제** — 기본 CRUD (삭제는 한 번 더 눌러 확인)
+- **마감일** — 오늘 마감은 노란색, 기한이 지난 일은 빨간색으로 표시
+- **카테고리** — 카테고리마다 고정 색이 붙고, 카테고리별로 골라 보기
+
+### 보기
+- **캘린더** — 월간 달력에 마감일별로 할 일 표시
+- **목록** — 카테고리 필터, 완료 숨기기
+- **구글 캘린더로 내보내기** — `.ics` 파일을 받아 구글 캘린더에서 가져오기
+
+### 로그인 · 보안 (사용자별 데이터 분리)
+- **회원가입 / 로그인 / 로그아웃** — Supabase Auth (이메일 + 비밀번호)
+- **내 할 일만 보기** — 모든 할 일에 주인(`user_id`)이 기록되고, DB의 **RLS(행 수준 보안)** 정책으로 본인 데이터만 조회·추가·수정·삭제할 수 있어요. 서버 코드도 모든 요청에 본인 조건을 붙여서 두 번 막아요.
+- **키는 서버에만** — 화면 코드는 백엔드 API만 호출하고, Supabase 키는 서버 환경변수에만 있어요. 관리자 키(secret / service_role)는 쓰지 않아요.
+- **안전한 로그인 유지** — 로그인 토큰은 화면 JS가 읽을 수 없는 `httpOnly` 쿠키에 보관해요.
+- **그 밖의 보호** — 입력값 검사, 로그인 시도 횟수 제한(IP당 1분 10회), 보안 헤더(CSP 등), 할 일 제목은 항상 글자로만 표시(HTML 실행 안 됨)
+
+### 기술 구성
+| 구분 | 사용 기술 |
 |---|---|
-| Python | 프로그래밍 언어 |
-| Streamlit | 파이썬만으로 웹 화면을 만드는 라이브러리 |
-| SQLite | 파일 하나(`todo.db`)로 된 무료 DB. 껐다 켜도 데이터가 남아요. |
-| python-dotenv | `.env` 파일의 설정값을 읽어 와요. |
+| 화면 | HTML / CSS / JavaScript |
+| 백엔드 | Node.js + Express |
+| DB · 로그인 | Supabase (Postgres + Auth + RLS) |
+| 배포 | Render |
 
-## DB 구조 (`todos` 테이블)
+모두 무료 요금제로 사용합니다.
+
+## 폴더 구조
+```
+public/            화면 (index.html, style.css, app.js)
+server/index.js    백엔드 API
+server/supabase.js Supabase 연결, 로그인 쿠키, 로그인 확인
+supabase/schema.sql DB 표와 RLS 정책
+.env.example       환경변수 예시 (실제 값은 .env 에, GitHub에는 안 올림)
+```
+
+## DB 구조 (`todos` 표)
 | 열 | 종류 | 설명 |
 |---|---|---|
-| id | INTEGER (자동 증가) | 고유 번호 |
-| title | TEXT (필수) | 할 일 내용 |
-| done | INTEGER (0/1) | 완료 여부 |
-| due_date | TEXT (비워도 됨) | 마감일 (YYYY-MM-DD) |
-| category | TEXT (기본값 '일반') | 카테고리 |
+| id | bigint (자동 증가) | 고유 번호 |
+| user_id | uuid | 주인 (로그인한 사용자, `auth.users` 연결) |
+| title | text (필수, 100자 이하) | 할 일 내용 |
+| done | boolean | 완료 여부 |
+| due_date | date (비워도 됨) | 마감일 |
+| category | text (기본값 '일반', 20자 이하) | 카테고리 |
+| created_at | timestamptz | 만든 시각 |
 
-## 실행 방법 (Windows)
+## 실행 방법 (내 컴퓨터)
+
+### 준비물
+- Node.js 22.9 이상
+- Supabase 프로젝트 (무료)
+
+### 1. 코드 받기 · 설치
 ```bash
-py -m pip install -r requirements.txt
-py -m streamlit run app.py
+git clone https://github.com/kwkworks/todo-app.git
+cd todo-app
+npm ci
 ```
-위 명령을 실행하면 내 컴퓨터에서 서버가 켜지고 브라우저가 자동으로 열려요. 자동으로 열리지 않으면 주소창에 `localhost:8501`을 직접 입력하세요. (서버를 켠 본인 컴퓨터에서만 열리는 주소이고, 실행 중인 터미널 창을 닫으면 접속할 수 없어요.)
 
-## 설정과 비밀값 관리
-- 설정값은 코드에 직접 쓰지 않고 `.env` 파일에서 읽어요. 지금 설정은 DB 파일 위치(`DB_PATH`) 하나뿐이고, `.env`가 없으면 기본값 `todo.db`를 써요. 그래서 내려받은 그대로 실행돼요.
-- DB 파일 위치를 바꾸고 싶을 때만 `.env.example`을 복사해 `.env`를 만들어 고치세요.
-- SQLite는 비밀번호가 없는 DB라서, 이 프로젝트에는 비밀번호나 API 키가 필요 없어요.
-- 나중에 비밀값이 생기면 `.env`에만 적어요. `.env`와 `todo.db`는 `.gitignore`에 있어서 GitHub에 올라가지 않아요.
+### 2. Supabase DB 준비 (처음 한 번)
+Supabase 대시보드 → **SQL Editor** 에 `supabase/schema.sql` 전체를 붙여넣고 **Run**.
+`todos` 표와 RLS 정책이 만들어집니다.
+
+### 3. 환경변수 설정
+`.env.example` 을 복사해 `.env` 를 만들고 Supabase 값을 넣습니다. (Project Settings → API Keys / Data API)
+```
+SUPABASE_URL=https://<프로젝트ID>.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+> secret / service_role 키는 넣지 마세요. `.env` 는 GitHub에 올라가지 않습니다.
+
+### 4. 실행
+```bash
+npm start
+```
+브라우저에서 `localhost:3000` 에 접속 → 회원가입 / 로그인. 끌 때는 터미널에서 `Ctrl+C`.
+
+## 배포 (Render)
+
+| 항목 | 값 |
+|---|---|
+| Build Command | `npm ci` |
+| Start Command | `npm start` |
+| 환경변수 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `HOST=0.0.0.0`, `NODE_ENV=production`, `APP_URL=<배포 주소>` |
+
+`main` 브랜치에 push 하면 자동으로 다시 배포됩니다.

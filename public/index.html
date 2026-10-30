@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>나의 Todo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main class="wrap">
+
+    <!-- 로그인 / 회원가입 -->
+    <section id="auth" hidden>
+      <h1 class="app-title">나의 Todo</h1>
+      <p class="app-sub">로그인하면 나만의 할 일 목록이 열려요.</p>
+      <div class="card auth-card">
+        <div class="seg" role="tablist">
+          <button type="button" class="seg-btn active" data-mode="login" role="tab">로그인</button>
+          <button type="button" class="seg-btn" data-mode="signup" role="tab">회원가입</button>
+        </div>
+        <form id="auth-form" novalidate>
+          <label>이메일
+            <input id="email" type="email" autocomplete="email" required maxlength="254">
+          </label>
+          <label>비밀번호
+            <input id="password" type="password" autocomplete="current-password" required minlength="8" maxlength="72">
+          </label>
+          <button id="auth-submit" class="primary" type="submit">로그인</button>
+          <p id="auth-msg" class="msg" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- 할 일 화면 -->
+    <section id="app" hidden>
+      <header class="top">
+        <div>
+          <h1 class="app-title">나의 Todo</h1>
+          <p id="today-text" class="app-sub"></p>
+        </div>
+        <div class="who">
+          <span id="user-email"></span>
+          <button id="logout" type="button" class="ghost small">로그아웃</button>
+        </div>
+      </header>
+
+      <div id="stats" class="stats"></div>
+
+      <form id="add-form" class="card add-form" novalidate>
+        <label class="grow">할 일
+          <input id="new-title" placeholder="무엇을 해야 하나요?" maxlength="100" required>
+        </label>
+        <label>마감일 (선택)
+          <input id="new-due" type="date">
+        </label>
+        <label>카테고리
+          <input id="new-cat" value="일반" maxlength="20">
+        </label>
+        <button class="primary full" type="submit">추가하기</button>
+        <p id="add-msg" class="msg full" role="status"></p>
+      </form>
+
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" data-view="cal" role="tab">📅 캘린더</button>
+        <button type="button" class="tab" data-view="list" role="tab">☰ 목록</button>
+      </div>
+
+      <div id="view-cal">
+        <div class="cal-nav">
+          <button id="prev-month" type="button" class="ghost" aria-label="이전 달">‹</button>
+          <button id="next-month" type="button" class="ghost" aria-label="다음 달">›</button>
+          <div id="month-title" class="cal-title"></div>
+          <button id="this-month" type="button" class="ghost">오늘</button>
+        </div>
+        <div id="cal" class="cal"></div>
+        <p class="hint">완료 표시와 삭제는 목록 탭에서 할 수 있어요. 마감일이 없는 일도 목록 탭에 있어요.</p>
+      </div>
+
+      <div id="view-list" hidden>
+        <div class="list-tools">
+          <div id="cats" class="pills"></div>
+          <label class="switch"><input id="hide-done" type="checkbox"> 완료 숨기기</label>
+        </div>
+        <ul id="list" class="list"></ul>
+        <p id="empty" class="hint" hidden>표시할 할 일이 없어요.</p>
+      </div>
+
+      <details class="card export">
+        <summary>📤 구글 캘린더로 내보내기</summary>
+        <a class="primary btn-link" href="/api/export.ics" download="my-todo.ics">캘린더 파일(.ics) 받기</a>
+        <ol>
+          <li>위 버튼으로 <code>my-todo.ics</code> 파일을 받아요.</li>
+          <li><a href="https://calendar.google.com/calendar/r/settings/export" target="_blank" rel="noopener noreferrer">구글 캘린더 가져오기 화면</a>을 열어요.</li>
+          <li><b>컴퓨터에서 파일 선택</b> → <code>my-todo.ics</code> → <b>가져오기</b>를 누르면 끝!</li>
+        </ol>
+        <p class="hint">마감일이 있는 내 할 일만 들어가요. 할 일을 바꾼 뒤에는 파일을 새로 받아 다시 가져오면 돼요.</p>
+      </details>
+    </section>
+
+  </main>
+</body>
+</html>
