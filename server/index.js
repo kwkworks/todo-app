@@ -67,6 +67,7 @@ function parseTodoInput(body, { partial }) {
   if ('done' in body) {
     if (typeof body.done !== 'boolean') throw badRequest('done 은 true/false 여야 합니다.');
     out.done = body.done;
+    out.done_at = body.done ? new Date().toISOString() : null; // 완료한 시각 (CLI의 오늘 완료 요약에 사용)
   }
   if (partial && Object.keys(out).length === 0) throw badRequest('바꿀 내용이 없습니다.');
   return out;

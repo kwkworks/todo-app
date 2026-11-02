@@ -15,6 +15,9 @@ create table if not exists public.todos (
   created_at timestamptz not null default now()
 );
 
+-- 완료한 시각 (CLI의 오늘 완료 요약용). 이미 만든 표에도 안전하게 추가된다.
+alter table public.todos add column if not exists done_at timestamptz;
+
 create index if not exists todos_user_due_idx on public.todos (user_id, due_date);
 
 -- ─────────────────────────────── 권한 ───────────────────────────────
