@@ -43,3 +43,8 @@ py -m streamlit run app.py
 - DB 파일 위치를 바꾸고 싶을 때만 `.env.example`을 복사해 `.env`를 만들어 고치세요.
 - SQLite는 비밀번호가 없는 DB라서, 이 프로젝트에는 비밀번호나 API 키가 필요 없어요.
 - 나중에 비밀값이 생기면 `.env`에만 적어요. `.env`와 `todo.db`는 `.gitignore`에 있어서 GitHub에 올라가지 않아요.
+<img width="1170" height="823" alt="image" src="https://github.com/user-attachments/assets/2beb85fe-f1df-4915-b4f5-aab97afd7f04" />
+<img width="939" height="807" alt="image" src="https://github.com/user-attachments/assets/616bb5d1-209a-46e9-b1d1-be64193ce19a" />
+<img width="951" height="830" alt="image" src="https://github.com/user-attachments/assets/73f83998-5474-4162-ad4e-80b75b8eecd7" />
+<img width="1046" height="786" alt="image" src="https://github.com/user-attachments/assets/e45c6ee2-7c32-4006-b8c1-5e82577de497" />
+
